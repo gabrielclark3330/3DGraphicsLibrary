@@ -43,10 +43,13 @@ class Surface extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setPaint(Color.blue);
-        
+        /*
         CollectionsOf3DPoints collection = new CollectionsOf3DPoints();
         Points3D cubePoints = collection.getCubePoints();
         float[][] cubePointsArr = cubePoints.getPoints();
+        */
+        
+        float[][] cubePointsArr = CollectionsOf3DPoints.cubePoints;
         
         BasicStroke bs4 = new BasicStroke(8, BasicStroke.CAP_SQUARE,
                 BasicStroke.JOIN_BEVEL);
@@ -64,6 +67,8 @@ class Surface extends JPanel implements ActionListener {
         float[][] newRotatedCubePoints = cubePointsArr;
         for (int i = 0; i < newRotatedCubePoints.length; i++) {
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 1, "x");
+        	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 1, "y");
+        	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 1, "z");
             System.out.println(newRotatedCubePoints[i][0] + " " +
             				newRotatedCubePoints[i][1] + " " + newRotatedCubePoints[i][2]);
 
