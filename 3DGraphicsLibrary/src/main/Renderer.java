@@ -1,4 +1,5 @@
 package main;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -42,18 +43,32 @@ class Surface extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setPaint(Color.blue);
-
-        int w = getWidth();
-        int h = getHeight();
-
-        Random r = new Random();
-
-        for (int i = 0; i < 2000; i++) {
-
-            int x = Math.abs(r.nextInt()) % w;
-            int y = Math.abs(r.nextInt()) % h;
-            g2d.drawLine(x, y, x, y);
+        
+        CollectionsOf3DPoints collection = new CollectionsOf3DPoints();
+        Points3D cubePoints = collection.getCubePoints();
+        float[][] cubePointsArr = cubePoints.getPoints();
+        
+        BasicStroke bs4 = new BasicStroke(8, BasicStroke.CAP_SQUARE,
+                BasicStroke.JOIN_BEVEL);
+        g2d.setStroke(bs4);
+        
+        for (int i = 0; i < cubePointsArr.length; i++) {
+            float[] xyPair = MatrixLibrary.orthographicProjection(cubePointsArr[i]);
+            xyPair = MatrixLibrary.scalorMultiplication(xyPair, 100);
+            xyPair = MatrixLibrary.elementwiseAddition(xyPair, 100);
+            int xInt = (int) xyPair[0];
+            int yInt = (int) xyPair[1];
+            g2d.drawLine(xInt, yInt, xInt, yInt);
         }
+        
+        float[][] newRotatedCubePoints = cubePointsArr;
+        for (int i = 0; i < newRotatedCubePoints.length; i++) {
+        	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 1, "x");
+            System.out.println(newRotatedCubePoints[i][0] + " " +
+            				newRotatedCubePoints[i][1] + " " + newRotatedCubePoints[i][2]);
+
+        }
+        CollectionsOf3DPoints.setPoints(newRotatedCubePoints);
     }
 
     @Override

@@ -7,9 +7,9 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
-public class PointsEx extends JFrame {
+public class Displayer extends JFrame {
 
-    public PointsEx() {
+    public Displayer() {
 
         initUI();
     }
@@ -28,7 +28,7 @@ public class PointsEx extends JFrame {
         });
 
         setTitle("Points");
-        setSize(350, 250);
+        setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -39,8 +39,8 @@ public class PointsEx extends JFrame {
             @Override
             public void run() {
 
-                PointsEx ex = new PointsEx();
-                ex.setVisible(true);
+            	Displayer disp = new Displayer();
+            	disp.setVisible(true);
             }
         });
     }
