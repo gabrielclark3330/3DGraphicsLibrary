@@ -53,31 +53,46 @@ class Surface extends JPanel implements ActionListener {
         
         float[][] cubePointsArr = CollectionsOf3DPoints.cubePoints;
         
-        BasicStroke bs4 = new BasicStroke(8, BasicStroke.CAP_SQUARE,
-                BasicStroke.JOIN_BEVEL);
+        BasicStroke bs4 = new BasicStroke(8, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
         g2d.setStroke(bs4);
+        
+        float[][] xyPairArr = new float[cubePointsArr.length][2];
         
         for (int i = 0; i < cubePointsArr.length; i++) {
             //float[] xyPair = MatrixLibrary.orthographicProjection(cubePointsArr[i]);
-        	float fov = 20;
+        	
+            float[] xyPair = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) 100, Axis.X);
+            
+        	float fov = 100;
         	float nearClip = 0;
         	float farClip = 10000;
-        	float[] xyPair = MatrixLibrary.perspectiveProjection(cubePointsArr[i], fov, nearClip, farClip);
+        	xyPair = MatrixLibrary.perspectiveProjection(cubePointsArr[i], fov, nearClip, farClip);
         	
+        	xyPair = MatrixLibrary.scalerMultiplication(xyPair, 100);
         	
-            xyPair = MatrixLibrary.scalerMultiplication(xyPair, 100);
-            xyPair = MatrixLibrary.elementwiseAddition(xyPair, 100);
-            int xInt = (int) xyPair[0];
-            int yInt = (int) xyPair[1];
-            g2d.drawLine(xInt, yInt, xInt, yInt);
+        	xyPairArr[i] = xyPair;
+        }
+        
+        for (int i = 1; i < cubePointsArr.length; i++) {
+        	float[] xyPair = xyPairArr[i];
+        	
+            int xInt1 = (int) xyPair[0];
+            int yInt1 = (int) xyPair[1];
+            
+            xyPair = xyPairArr[i-1];
+            int xInt2 = (int) xyPair[0];
+            int yInt2 = (int) xyPair[1];
+            
+            g2d.drawLine(xInt1, yInt1, xInt2, yInt2);
         }
         
         float[][] newRotatedCubePoints = cubePointsArr;
         for (int i = 0; i < newRotatedCubePoints.length; i++) {
+        	newRotatedCubePoints[i] = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) .1, Axis.Y);
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.X);
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.Y);
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.Z);
-        	newRotatedCubePoints[i] = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) .01, Axis.X);
+        	
             //System.out.println(newRotatedCubePoints[i][0] + " " + newRotatedCubePoints[i][1] + " " + newRotatedCubePoints[i][2]);
         }
         CollectionsOf3DPoints.setPoints(newRotatedCubePoints);
