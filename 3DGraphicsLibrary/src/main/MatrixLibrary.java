@@ -2,7 +2,13 @@ package main;
 
 public class MatrixLibrary {
 	
-	public static float[] rotatePointsAboutAxis(float[] inputPoint, float rotationInDegrees, String axis) {
+	public enum Axis {
+		X,
+		Y,
+		Z
+	}
+	
+	public static float[] rotatePointsAboutAxis(float[] inputPoint, float rotationInDegrees, Axis axis) {
 		float[][] result3D = new float[3][1];
 		
 		float[][] rotateX = new float[][] {
@@ -28,11 +34,11 @@ public class MatrixLibrary {
 			{inputPoint[2]}
 		};
 		
-		if(axis.toLowerCase()=="x") {
+		if(axis.equals(Axis.X)) {
 			result3D = multiplyMatrices(rotateX, inputVector);
-		}else if(axis.toLowerCase()=="y") {
+		}else if(axis.equals(Axis.Y)) {
 			result3D = multiplyMatrices(rotateY, inputVector);
-		}else if(axis.toLowerCase()=="z") {
+		}else if(axis.equals(Axis.Z)) {
 			result3D = multiplyMatrices(rotateZ, inputVector);
 		}
 		
@@ -41,6 +47,36 @@ public class MatrixLibrary {
 		resultFlat[1] = result3D[1][0];
 		resultFlat[2] = result3D[2][0];
 		return resultFlat;
+	}
+	
+	public static float[] movePointAlongAxis(float[] inputPoint, float movement, Axis axis) {
+		float[][] result3D = new float[3][1];
+		
+		if(axis.equals(Axis.X)) {
+			result3D = new float[][] {
+				{inputPoint[0]+movement},
+				{inputPoint[1]},
+				{inputPoint[2]}
+			};
+		}else if(axis.equals(Axis.Y)) {
+			result3D = new float[][] {
+				{inputPoint[0]},
+				{inputPoint[1]+movement},
+				{inputPoint[2]}
+			};
+		}else if(axis.equals(Axis.Z)) {
+			result3D = new float[][] {
+				{inputPoint[0]},
+				{inputPoint[1]},
+				{inputPoint[2]+movement}
+			};
+		}
+		
+		float[] movedResult = new float[3];
+		movedResult[0] = result3D[0][0];
+		movedResult[1] = result3D[1][0];
+		movedResult[2] = result3D[2][0];
+		return movedResult;
 	}
 	
 	// Takes in a point and projects it othographicly
@@ -58,6 +94,33 @@ public class MatrixLibrary {
 		};
 		
 		result3D = multiplyMatrices(projectionMatrix, inputVector);
+		
+		float[] resultFlat = new float[2];
+		resultFlat[0] = result3D[0][0];
+		resultFlat[1] = result3D[1][0];
+		return resultFlat;
+	}
+	
+	public static float[] perspectiveProjection(float[] inputPoint, float fov, float nearClip, float farClip) {
+		float[][] result3D = new float[3][1];
+		
+		float S = (float) (1/(Math.tan( (fov/2)*(Math.PI/180) )));
+		float clipping = (float) (-farClip/(farClip-nearClip));
+		float[][] perspectiveMatrix = new float[][] {
+			{S,0,0,0},
+			{0,S,0,0},
+			{0,0,clipping,-1},
+			{0,0,clipping,0}
+		};
+		
+		float[][] inputVector = new float[][] {
+			{inputPoint[0]},
+			{inputPoint[1]},
+			{inputPoint[2]},
+			{1}
+		};
+		
+		result3D = multiplyMatrices(perspectiveMatrix, inputVector);
 		
 		float[] resultFlat = new float[2];
 		resultFlat[0] = result3D[0][0];
@@ -86,7 +149,7 @@ public class MatrixLibrary {
 	}
 	
 	// Overloaded methods for different dimension matrixes
-	public static float[] scalorMultiplication(float[] inputMatrix, float scaleFactor) {
+	public static float[] scalerMultiplication(float[] inputMatrix, float scaleFactor) {
 		
 		float[] result = new float[inputMatrix.length];
 
