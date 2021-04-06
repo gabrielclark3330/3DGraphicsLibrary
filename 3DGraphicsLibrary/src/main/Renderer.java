@@ -57,18 +57,20 @@ class Surface extends JPanel implements ActionListener {
         g2d.setStroke(bs4);
         
         float[][] xyPairArr = new float[cubePointsArr.length][2];
-        
+        // REMEMBER TO DIAGRAM CLASSES
+        // DOCUMENTATION FOR ALL FILES
+        // SPELL CHECK IN CODE
         for (int i = 0; i < cubePointsArr.length; i++) {
             //float[] xyPair = MatrixLibrary.orthographicProjection(cubePointsArr[i]);
         	
-            float[] xyPair = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) 100, Axis.X);
+            float[] xyPair = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) 10, Axis.X);
+            
+            xyPair = MatrixLibrary.scalerMultiplication(xyPair, 50);
             
         	float fov = 100;
         	float nearClip = 0;
         	float farClip = 10000;
-        	xyPair = MatrixLibrary.perspectiveProjection(cubePointsArr[i], fov, nearClip, farClip);
-        	
-        	xyPair = MatrixLibrary.scalerMultiplication(xyPair, 100);
+        	xyPair = MatrixLibrary.perspectiveProjection(xyPair, fov, nearClip, farClip);
         	
         	xyPairArr[i] = xyPair;
         }
@@ -88,7 +90,7 @@ class Surface extends JPanel implements ActionListener {
         
         float[][] newRotatedCubePoints = cubePointsArr;
         for (int i = 0; i < newRotatedCubePoints.length; i++) {
-        	newRotatedCubePoints[i] = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) .1, Axis.Y);
+        	//newRotatedCubePoints[i] = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) .01, Axis.Y);
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.X);
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.Y);
         	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.Z);
