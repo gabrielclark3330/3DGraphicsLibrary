@@ -149,7 +149,7 @@ public class MatrixLibrary {
 	}
 	
 	// Overloaded methods for different dimension matrixes
-	public static float[] scalerMultiplication(float[] inputMatrix, float scaleFactor) {
+	public static float[] scalarMultiplication(float[] inputMatrix, float scaleFactor) {
 		
 		float[] result = new float[inputMatrix.length];
 
@@ -161,7 +161,7 @@ public class MatrixLibrary {
 	}
 
 	// Overloaded methods for different dimension matrixes
-	public static float[][] scalorMultiplication(float[][] inputMatrix, float scaleFactor) {
+	public static float[][] scalarMultiplication(float[][] inputMatrix, float scaleFactor) {
 		
 		float[][] result = new float[inputMatrix.length][inputMatrix[0].length];
 	
