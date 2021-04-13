@@ -57,7 +57,7 @@ class Surface extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         
 		g2d.setColor(Color.BLACK);
-		ArrayList<Triangle> pyramid = TriangleModels.getPiramid();
+		ArrayList<Triangle> pyramid = TriangleModels.getPyramid();
 		for (int i=0; i<pyramid.size(); i++) {
 			Triangle t = pyramid.get(i);
 		    Path2D path = new Path2D.Double();
@@ -114,25 +114,35 @@ class Surface extends JPanel implements ActionListener {
         super.paintComponent(g);
         doDrawing(g);
         // slider to control horizontal rotation
-        JSlider headingSlider = new JSlider(0, 360, 180);
-        headingSlider.addChangeListener(new SliderListener());
+        JSlider headingSlider = new JSlider(0, 360, 0);
         add(headingSlider, BorderLayout.SOUTH);
 
         // slider to control vertical rotation
-        JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, 0, 360, 180);
-        pitchSlider.addChangeListener(new SliderListener());
+        JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, 0, 360, 0);
         add(pitchSlider, BorderLayout.EAST);
         
-        
+        // Need a more elegant solution here
+        headingSlider.addChangeListener(new SliderListener(headingSlider, pitchSlider));
+        pitchSlider.addChangeListener(new SliderListener(headingSlider, pitchSlider));
+    	  
     }
     
     class SliderListener implements ChangeListener {
+    	JSlider headingSlider;
+    	JSlider pitchSlider;
+    	public SliderListener(JSlider headingSlider, JSlider pitchSlider) {
+    		this.headingSlider = headingSlider;
+    		this.pitchSlider = pitchSlider;
+    	}
+    	
         public void stateChanged(ChangeEvent e) {
-            JSlider source = (JSlider)e.getSource();
-            //if (!source.getValueIsAdjusting()) {
-            	pitch = source.getValue();
-            	heading = source.getValue();
-            //}    
+            //JSlider source = (JSlider)e.getSource();
+            if (e.getSource() == headingSlider) {
+            	heading = headingSlider.getValue();
+	        }
+            if (e.getSource() == pitchSlider) {
+	        	pitch = pitchSlider.getValue();
+	        }
         }
     }
 

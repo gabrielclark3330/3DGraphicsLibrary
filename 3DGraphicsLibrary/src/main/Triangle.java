@@ -3,7 +3,7 @@ package main;
 import java.awt.Color;
 
 public class Triangle {
-	// Note: these are listed in counterClockwise order.
+	// Note: these points are listed in counterClockwise order.
 	Point p1;
 	Point p2;
 	Point p3;

@@ -8,7 +8,7 @@ public class MatrixLibrary {
 		Z
 	}
 	
-	// Takes in a Point, a rotation in degrees and an 
+	// Takes in a Point, a rotation in degrees, and an 
 	// axis and returns the coordinates of the point with that rotation.
 	public static Point rotatePointsAboutAxis(Point inputPoint, float rotationInDegrees, Axis axis) {
 		float[][] result3D = new float[3][1];
@@ -47,7 +47,7 @@ public class MatrixLibrary {
 		return resultPoint;
 	}
 	
-	// Adds a value to a points given axis.
+	// Moves a point along a given axis.
 	public static Point movePointAlongAxis(Point inputPoint, float movement, Axis axis) {
 		float[][] result3D = new float[3][1];
 		
@@ -120,6 +120,8 @@ public class MatrixLibrary {
 		return resultPoint;
 	}
 	
+	// Takes matrixes formated as 2D arrays and multiplies 
+	// them together with matrix multiplication rules.
 	public static float[][] multiplyMatrices(float[][] firstMatrix, float[][] secondMatrix) {
 		float[][] result = new float[firstMatrix.length][secondMatrix[0].length];
 
