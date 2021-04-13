@@ -15,12 +15,11 @@ import javax.swing.Timer;
 
 import main.MatrixLibrary.Axis;
 
-public class Renderer {
-	
-}
 
 class Surface extends JPanel implements ActionListener {
-
+	
+	// Code involving the timer here is boiler plate to render the screen
+	// and close the program.
     private final int DELAY = 150;
     private Timer timer;
 
@@ -39,7 +38,7 @@ class Surface extends JPanel implements ActionListener {
         
         return timer;
     }
-
+    // doDrawing 
     private void doDrawing(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
@@ -59,7 +58,7 @@ class Surface extends JPanel implements ActionListener {
         float[][] xyPairArr = new float[cubePointsArr.length][2];
         // REMEMBER TO DIAGRAM CLASSES
         // DOCUMENTATION FOR ALL FILES
-        // SPELL CHECK IN CODE
+        
         for (int i = 0; i < cubePointsArr.length; i++) {
             //float[] xyPair = MatrixLibrary.orthographicProjection(cubePointsArr[i]);
         	
