@@ -8,7 +8,9 @@ public class MatrixLibrary {
 		Z
 	}
 	
-	public static float[] rotatePointsAboutAxis(float[] inputPoint, float rotationInDegrees, Axis axis) {
+	// Takes in a Point, a rotation in degrees and an 
+	// axis and returns the coordinates of the point with that rotation.
+	public static Point rotatePointsAboutAxis(Point inputPoint, float rotationInDegrees, Axis axis) {
 		float[][] result3D = new float[3][1];
 		
 		float[][] rotateX = new float[][] {
@@ -27,11 +29,10 @@ public class MatrixLibrary {
 			{0,0,1},
 		};
 		
-		
 		float[][] inputVector = new float[][] {
-			{inputPoint[0]},
-			{inputPoint[1]},
-			{inputPoint[2]}
+			{inputPoint.x},
+			{inputPoint.y},
+			{inputPoint.z}
 		};
 		
 		if(axis.equals(Axis.X)) {
@@ -42,45 +43,40 @@ public class MatrixLibrary {
 			result3D = multiplyMatrices(rotateZ, inputVector);
 		}
 		
-		float[] resultFlat = new float[3];
-		resultFlat[0] = result3D[0][0];
-		resultFlat[1] = result3D[1][0];
-		resultFlat[2] = result3D[2][0];
-		return resultFlat;
+		Point resultPoint = new Point(result3D[0][0], result3D[1][0], result3D[2][0]);
+		return resultPoint;
 	}
 	
-	public static float[] movePointAlongAxis(float[] inputPoint, float movement, Axis axis) {
+	// Adds a value to a points given axis.
+	public static Point movePointAlongAxis(Point inputPoint, float movement, Axis axis) {
 		float[][] result3D = new float[3][1];
 		
 		if(axis.equals(Axis.X)) {
 			result3D = new float[][] {
-				{inputPoint[0]+movement},
-				{inputPoint[1]},
-				{inputPoint[2]}
+				{inputPoint.x+movement},
+				{inputPoint.y},
+				{inputPoint.z}
 			};
 		}else if(axis.equals(Axis.Y)) {
 			result3D = new float[][] {
-				{inputPoint[0]},
-				{inputPoint[1]+movement},
-				{inputPoint[2]}
+				{inputPoint.x},
+				{inputPoint.y+movement},
+				{inputPoint.z}
 			};
 		}else if(axis.equals(Axis.Z)) {
 			result3D = new float[][] {
-				{inputPoint[0]},
-				{inputPoint[1]},
-				{inputPoint[2]+movement}
+				{inputPoint.x},
+				{inputPoint.y},
+				{inputPoint.z+movement}
 			};
 		}
 		
-		float[] movedResult = new float[3];
-		movedResult[0] = result3D[0][0];
-		movedResult[1] = result3D[1][0];
-		movedResult[2] = result3D[2][0];
-		return movedResult;
+		Point resultPoint = new Point(result3D[0][0], result3D[1][0], result3D[2][0]);
+		return resultPoint;
 	}
 	
-	// Takes in a point and projects it othographicly
-	public static float[] orthographicProjection(float[] inputPoint) {
+	// Takes in a point and projects it orthographically.
+	public static Point orthographicProjection(Point inputPoint) {
 		float[][] result3D = new float[3][1];
 		float[][] projectionMatrix = new float[][] {
 			{1,0,0},
@@ -88,20 +84,19 @@ public class MatrixLibrary {
 		};
 		
 		float[][] inputVector = new float[][] {
-			{inputPoint[0]},
-			{inputPoint[1]},
-			{inputPoint[2]}
+			{inputPoint.x},
+			{inputPoint.y},
+			{inputPoint.z}
 		};
 		
 		result3D = multiplyMatrices(projectionMatrix, inputVector);
 		
-		float[] resultFlat = new float[2];
-		resultFlat[0] = result3D[0][0];
-		resultFlat[1] = result3D[1][0];
-		return resultFlat;
+		Point resultPoint = new Point(result3D[0][0], result3D[1][0], (float) 0);
+		return resultPoint;
 	}
 	
-	public static float[] perspectiveProjection(float[] inputPoint, float fov, float nearClip, float farClip) {
+	// Takes a point and applies a perspective projection to it.
+	public static Point perspectiveProjection(Point inputPoint, float fov, float nearClip, float farClip) {
 		float[][] result3D = new float[3][1];
 		
 		float S = (float) (1/(Math.tan( (fov/2)*(Math.PI/180) )));
@@ -114,18 +109,15 @@ public class MatrixLibrary {
 		};
 		
 		float[][] inputVector = new float[][] {
-			{inputPoint[0]},
-			{inputPoint[1]},
-			{inputPoint[2]},
-			{1}
+			{inputPoint.x},
+			{inputPoint.y},
+			{inputPoint.z}
 		};
 		
 		result3D = multiplyMatrices(perspectiveMatrix, inputVector);
 		
-		float[] resultFlat = new float[2];
-		resultFlat[0] = result3D[0][0];
-		resultFlat[1] = result3D[1][0];
-		return resultFlat;
+		Point resultPoint = new Point(result3D[0][0], result3D[1][0], (float) 0);
+		return resultPoint;
 	}
 	
 	public static float[][] multiplyMatrices(float[][] firstMatrix, float[][] secondMatrix) {
@@ -175,32 +167,30 @@ public class MatrixLibrary {
 	}
 	
 	// Overloaded methods for different dimension matrixes
-		public static float[] elementwiseAddition(float[] inputMatrix, float scaleFactor) {
-			
-			float[] result = new float[inputMatrix.length];
+	public static float[] elementwiseAddition(float[] inputMatrix, float scaleFactor) {
+		
+		float[] result = new float[inputMatrix.length];
 
-		    for (int col = 0; col < result.length; col++) {
-	            result[col] = inputMatrix[col] + scaleFactor;
-		    }
+	    for (int col = 0; col < result.length; col++) {
+            result[col] = inputMatrix[col] + scaleFactor;
+	    }
 
-		    return result;
-		}
+	    return result;
+	}
 
-		// Overloaded methods for different dimension matrixes
-		public static float[][] elementwiseAddition(float[][] inputMatrix, float scaleFactor) {
-			
-			float[][] result = new float[inputMatrix.length][inputMatrix[0].length];
+	// Overloaded methods for different dimension matrixes
+	public static float[][] elementwiseAddition(float[][] inputMatrix, float scaleFactor) {
 		
-		    for (int row = 0; row < result.length; row++) {
-		        for (int col = 0; col < result[row].length; col++) {
-		            result[row][col] = inputMatrix[row][col] + scaleFactor;
-		        }
-		    }
-		
-		    return result;
-		}
-		
-		
+		float[][] result = new float[inputMatrix.length][inputMatrix[0].length];
+	
+	    for (int row = 0; row < result.length; row++) {
+	        for (int col = 0; col < result[row].length; col++) {
+	            result[row][col] = inputMatrix[row][col] + scaleFactor;
+	        }
+	    }
+	
+	    return result;
+	}
 
 }
 
