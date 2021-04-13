@@ -75,9 +75,9 @@ class Surface extends JPanel implements ActionListener {
 		    p2 = MatrixLibrary.movePointAlongAxis(p2, (float) getHeight()/4, Axis.Y);
 		    p3 = MatrixLibrary.movePointAlongAxis(p3, (float) getHeight()/4, Axis.Y);
 		    
-		    p1 = MatrixLibrary.movePointAlongAxis(p1, (float) .1, Axis.X);
-		    p2 = MatrixLibrary.movePointAlongAxis(p2, (float) .1, Axis.X);
-		    p3 = MatrixLibrary.movePointAlongAxis(p3, (float) .1, Axis.X);
+		    p1 = MatrixLibrary.rotatePointsAboutAxis(p1, heading, Axis.Y);
+		    p2 = MatrixLibrary.rotatePointsAboutAxis(p2, heading, Axis.Y);
+		    p3 = MatrixLibrary.rotatePointsAboutAxis(p3, heading, Axis.Y);
 		    
 		    p1 = MatrixLibrary.rotatePointsAboutAxis(p1, pitch, Axis.X);
 		    p2 = MatrixLibrary.rotatePointsAboutAxis(p2, pitch, Axis.X);
@@ -136,7 +136,6 @@ class Surface extends JPanel implements ActionListener {
     	}
     	
         public void stateChanged(ChangeEvent e) {
-            //JSlider source = (JSlider)e.getSource();
             if (e.getSource() == headingSlider) {
             	heading = headingSlider.getValue();
 	        }
