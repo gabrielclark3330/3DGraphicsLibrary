@@ -124,7 +124,7 @@ class Surface extends JPanel implements ActionListener {
         // Need a more elegant solution here
         headingSlider.addChangeListener(new SliderListener(headingSlider, pitchSlider));
         pitchSlider.addChangeListener(new SliderListener(headingSlider, pitchSlider));
-    	  
+    
     }
     
     class SliderListener implements ChangeListener {

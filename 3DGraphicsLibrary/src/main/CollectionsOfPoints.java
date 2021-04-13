@@ -26,10 +26,12 @@ public class CollectionsOfPoints {
 		};
 	}
 	
+	/*
 	public static Point getCubePoints() {
 		Point cube = new Point(cubePoints);
 		return cube;
 	}
+	*/
 	
 	public static void setCubePoints(float[][] points) {
 		cubePoints = points;
