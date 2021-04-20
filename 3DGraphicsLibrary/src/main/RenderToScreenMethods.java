@@ -35,6 +35,9 @@ public class RenderToScreenMethods {
 			int maxY = (int) Math.max(Math.max(p1.y, p2.y), p3.y);
 			
 			
+			// Credit for this algorithm goes to Dr. Rogach
+			// I couldn't figure out how to do filling manually until reading a paper by him.
+			// I just used his algorithm while developing but will replace it with mine below when it is finished.
 			double Area =
 				       (p1.y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - p1.x);
 
