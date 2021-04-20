@@ -15,7 +15,7 @@ This file draws the stored points to screen with the desired perspective and rot
 A storage library for all of the matrix oporations needed in 3D graphics.
 
 ### [Point.java](3DGraphicsLibrary/src/main/Point.java)
-A class to hold points in a simple format accessed like p.x, p.x ...
+A class to hold points in a simple format accessed like p.x, p.y ...
 
 ### [Triangle.java](3DGraphicsLibrary/src/main/Triangle.java)
 Class that holds 3 points and a color assosiated with a triangle.
