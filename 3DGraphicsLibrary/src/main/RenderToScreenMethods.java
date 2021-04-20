@@ -9,6 +9,11 @@ public class RenderToScreenMethods {
 	// Creates a buffered img with the correct coloring and placement of the passed triangles
 	public static BufferedImage renderColoredTris(ArrayList<Triangle> triangles, int width, int height) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		// Creates a starter deapth buffer with really far away values
+		double[] zBuffer = new double[img.getWidth() * img.getHeight()];
+		for (int q = 0; q < zBuffer.length; q++) {
+		    zBuffer[q] = Double.NEGATIVE_INFINITY;
+		}
 		
 		for(Triangle tri : triangles) {
 			Point p1 = tri.p1;
@@ -42,11 +47,21 @@ public class RenderToScreenMethods {
 		            double b3 =
 		              ((y - p2.y) * (p1.x - p2.x) + (p1.y - p2.y) * (p2.x - x)) / Area;
 		            if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
-		                img.setRGB(x, y, tri.color.getRGB());
+		            	double depth = b1 * p1.z + b2 * p2.z + b3 * p3.z;
+		            	int zIndex = y * img.getWidth() + x;
+		    		    if (zBuffer[zIndex] < depth) {
+		    		        img.setRGB(x, y, tri.color.getRGB());
+		    		        zBuffer[zIndex] = depth;
+		    		    }
+		                //img.setRGB(x, y, tri.color.getRGB());
 		            }
 					
 				}
 			}
+			
+			// EXPERIMENTAL
+			
+		    
 			
 		}
 		
