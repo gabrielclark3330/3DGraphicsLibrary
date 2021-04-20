@@ -10,7 +10,7 @@ public class MatrixLibrary {
 	
 	// Takes in a Point, a rotation in degrees, and an 
 	// axis and returns the coordinates of the point with that rotation.
-	public static Point rotatePointsAboutAxis(Point inputPoint, float rotationInDegrees, Axis axis) {
+	public static Point rotatePointsAboutOrigin(Point inputPoint, float rotationInDegrees, Axis axis) {
 		float[][] result3D = new float[3][1];
 		
 		float[][] rotateX = new float[][] {
@@ -42,6 +42,62 @@ public class MatrixLibrary {
 		}else if(axis.equals(Axis.Z)) {
 			result3D = multiplyMatrices(rotateZ, inputVector);
 		}
+		
+		Point resultPoint = new Point(result3D[0][0], result3D[1][0], result3D[2][0]);
+		return resultPoint;
+	}
+	
+	// Takes in a Point, a rotation in degrees, and an 
+	// axis vector and returns the coordinates of the point with that rotation.
+	// Note: The vector (Ux, Uy, Uz) passed in aboutVector must be a unit vector
+	public static Point rotatePointsAboutAxis(Point inputPoint, float rotationInDegrees, float[] aboutVector) {
+		float[][] result3D = new float[3][1];
+		
+		// Converts the input in degrees into radians
+		float rotationInRadians = (float) Math.toRadians(rotationInDegrees);
+		
+		// Normalizes the aboutVector passed into the function
+		for(int i=0; i<aboutVector.length; i++) {
+			float sumSquare = 0; 
+			for(int j=0; j<aboutVector.length; j++) {
+				sumSquare += aboutVector[j]*aboutVector[j];
+			}
+			aboutVector[i] =  (aboutVector[i]/(float)Math.sqrt(sumSquare));
+		}
+		
+		// Rotation matrix for complex rotations about a given vector
+		float[][] rotateMatrix = new float[][] {
+			{//	                                                 x              x          
+				(float) (Math.cos(rotationInRadians)+aboutVector[0]*aboutVector[0]*(1- (float) Math.cos(rotationInRadians))),
+			 //	            x              y                                                     z
+				aboutVector[0]*aboutVector[1]*(1-(float)Math.cos(rotationInRadians))-aboutVector[2]*(float)Math.sin(rotationInRadians),
+			 //	            x              z                                                     y
+				aboutVector[0]*aboutVector[2]*(1-(float)Math.cos(rotationInRadians))+aboutVector[1]*(float)Math.sin(rotationInRadians)
+			},
+			{//             y              x                                                     z
+				aboutVector[1]*aboutVector[0]*(1-(float)Math.cos(rotationInRadians))+aboutVector[2]*(float)Math.sin(rotationInRadians),
+			 //	                                                 y              y          
+				(float) (Math.cos(rotationInRadians)+aboutVector[1]*aboutVector[1]*(1- (float) Math.cos(rotationInRadians))),
+			 //	            y              z                                                     x      
+				aboutVector[1]*aboutVector[2]*(1-(float)Math.cos(rotationInRadians))-aboutVector[0]*(float)Math.sin(rotationInRadians)
+			},
+			{//             z              x                                                     y
+				aboutVector[2]*aboutVector[0]*(1-(float)Math.cos(rotationInRadians))-aboutVector[1]*(float)Math.sin(rotationInRadians),
+			 
+			 //	            z              y                                                     x      
+				aboutVector[2]*aboutVector[1]*(1-(float)Math.cos(rotationInRadians))+aboutVector[0]*(float)Math.sin(rotationInRadians),
+			 //                                                  z              z          
+				(float) (Math.cos(rotationInRadians)+aboutVector[2]*aboutVector[2]*(1- (float) Math.cos(rotationInRadians))),
+			}
+		};
+		
+		float[][] inputVector = new float[][] {
+			{inputPoint.x},
+			{inputPoint.y},
+			{inputPoint.z}
+		};
+		
+		result3D = multiplyMatrices(rotateMatrix, inputVector);
 		
 		Point resultPoint = new Point(result3D[0][0], result3D[1][0], result3D[2][0]);
 		return resultPoint;

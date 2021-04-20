@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JFrame;
@@ -55,9 +56,11 @@ class Surface extends JPanel implements ActionListener {
     private void doDrawing(Graphics g) {
     	
         Graphics2D g2d = (Graphics2D) g;
+        //g2d.translate(getWidth() / 2, getHeight() / 2);
         
 		g2d.setColor(Color.BLACK);
 		ArrayList<Triangle> pyramid = TriangleModels.getPyramid();
+		ArrayList<Triangle> passedTriangles = new ArrayList<Triangle>();
 		for (int i=0; i<pyramid.size(); i++) {
 			Triangle t = pyramid.get(i);
 		    Path2D path = new Path2D.Double();
@@ -67,6 +70,7 @@ class Surface extends JPanel implements ActionListener {
 		    Point p2 = t.p2;
 		    Point p3 = t.p3;
 		    
+		    /*
 		    p1 = MatrixLibrary.movePointAlongAxis(p1, (float) getWidth()/4, Axis.X);
 		    p2 = MatrixLibrary.movePointAlongAxis(p2, (float) getWidth()/4, Axis.X);
 		    p3 = MatrixLibrary.movePointAlongAxis(p3, (float) getWidth()/4, Axis.X);
@@ -74,14 +78,15 @@ class Surface extends JPanel implements ActionListener {
 		    p1 = MatrixLibrary.movePointAlongAxis(p1, (float) getHeight()/4, Axis.Y);
 		    p2 = MatrixLibrary.movePointAlongAxis(p2, (float) getHeight()/4, Axis.Y);
 		    p3 = MatrixLibrary.movePointAlongAxis(p3, (float) getHeight()/4, Axis.Y);
+		    */
 		    
-		    p1 = MatrixLibrary.rotatePointsAboutAxis(p1, heading, Axis.Y);
-		    p2 = MatrixLibrary.rotatePointsAboutAxis(p2, heading, Axis.Y);
-		    p3 = MatrixLibrary.rotatePointsAboutAxis(p3, heading, Axis.Y);
+		    p1 = MatrixLibrary.rotatePointsAboutOrigin(p1, heading, Axis.Y);
+		    p2 = MatrixLibrary.rotatePointsAboutOrigin(p2, heading, Axis.Y);
+		    p3 = MatrixLibrary.rotatePointsAboutOrigin(p3, heading, Axis.Y);
 		    
-		    p1 = MatrixLibrary.rotatePointsAboutAxis(p1, pitch, Axis.X);
-		    p2 = MatrixLibrary.rotatePointsAboutAxis(p2, pitch, Axis.X);
-		    p3 = MatrixLibrary.rotatePointsAboutAxis(p3, pitch, Axis.X);
+		    p1 = MatrixLibrary.rotatePointsAboutOrigin(p1, pitch, Axis.X);
+		    p2 = MatrixLibrary.rotatePointsAboutOrigin(p2, pitch, Axis.X);
+		    p3 = MatrixLibrary.rotatePointsAboutOrigin(p3, pitch, Axis.X);
 		    
 		    float fov = 50;
         	float nearClip = 0;
@@ -91,20 +96,18 @@ class Surface extends JPanel implements ActionListener {
 		    p3 = MatrixLibrary.perspectiveProjection(p3, fov, nearClip, farClip);
 		    
 		    
+		    passedTriangles.add(new Triangle(p1, p2, p3, t.color));
+		    /*
 		    path.moveTo(p1.x, p1.y);
 		    path.lineTo(p2.x, p2.y);
 		    path.lineTo(p3.x, p3.y);
 		    path.closePath();
 		    g2d.draw(path);
+		    */
 		    
-		    /*
-		    //newRotatedCubePoints[i] = MatrixLibrary.movePointAlongAxis(cubePointsArr[i], (float) .1, Axis.Z);
-		    newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.X);
-        	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.Y);
-        	newRotatedCubePoints[i] = MatrixLibrary.rotatePointsAboutAxis(cubePointsArr[i], 2, Axis.Z);
-        	*/
 		}
-		
+		BufferedImage img = RenderToScreenMethods.renderColoredTris(passedTriangles, getWidth(), getHeight());
+		g2d.drawImage(img, 0, 0, null);
     }
     
     // Overridden methods to help in the displayer class.
