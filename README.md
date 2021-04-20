@@ -1,7 +1,7 @@
 # 3DGraphicsLibrary
 
 ## Getting started
-
+To start this program no external libraries are needed, just run the Displayer.java file and interact with the screen that is created. 
 
 ## Contained files 
 
