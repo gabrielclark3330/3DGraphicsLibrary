@@ -9,11 +9,9 @@ public class RenderToScreenMethods {
 	// Creates a buffered img with the correct coloring and placement of the passed triangles
 	public static BufferedImage renderColoredTris(ArrayList<Triangle> triangles, int width, int height) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
 		// Creates a starter deapth buffer with really far away values
-		double[] zBuffer = new double[img.getWidth() * img.getHeight()];
-		for (int q = 0; q < zBuffer.length; q++) {
-		    zBuffer[q] = Double.NEGATIVE_INFINITY;
-		}
+		
 		
 		for(Triangle tri : triangles) {
 			Point p1 = tri.p1;
@@ -34,14 +32,18 @@ public class RenderToScreenMethods {
 			int minY = (int) Math.min(Math.min(p1.y, p2.y), p3.y);
 			int maxY = (int) Math.max(Math.max(p1.y, p2.y), p3.y);
 			
+			Point A = new Point(0,1,0);
+			Point B = new Point(0,4,0);
+			Point C = new Point(1,8,0);
+			Point D = new Point(1,4,0);
 			
-			// Credit for this algorithm goes to Dr. Rogach
-			// I couldn't figure out how to do filling manually until reading a paper by him.
-			// I just used his algorithm while developing but will replace it with mine below when it is finished.
-
+			
+			System.out.println(pointSlopeAlgebraic(A, B, C, D));
+			
+			// For every line
 			for(int y=minY; y<=maxY; y++) {
 				int[] startStop = findLinesIntersected(y, minX, maxX, minY, maxY, new Triangle(p1, p2, p3, tri.color));
-				System.out.println("start: " + startStop[0] + " stop: " + startStop[1]);
+				//System.out.println("start: " + startStop[0] + " stop: " + startStop[1]);
 				int xStart = startStop[0];
 				int xEnd = startStop[1];
 				for(int x=minX; x<=maxX; x++) {
@@ -59,12 +61,34 @@ public class RenderToScreenMethods {
 	// Give the points on a line and a Y value and it will give you the corresponding X
 	private static int pointSlope(int x1, int x2, int y1, int y2, int inputY) {
 		int returnX = 0;
-		if(y1-y2 == 0) {
-			return 0;
+		if((y1-y2) == 0) {
+			return 0+x1;
 		}
 		returnX = (inputY-y1)*((x1-x2)/(y1-y2))+x1;
 		return returnX;
 	}
+	
+	// Takes in the line made by points AB and line CD and returns the x coordinate of their intersection.
+	// This will return NaN if lines are parallel
+	private static float pointSlopeAlgebraic(Point a, Point b, Point c, Point d) {
+		float intersectX = (float) 0.0;
+		float ax = a.x;
+		float ay = a.y;
+		float bx = b.x;
+		float by = b.y;
+		float cx = c.x;
+		float cy = c.y;
+		float dx = d.x;
+		float dy = d.y;
+		
+		intersectX = ((((cy - dy)/(cx - dx))*cx)-cy+ay-((ay - by)/(ax - bx))*ax)/(((cy - dy) /
+									(cx - dx)) - ((ay - by)/(ax - bx)));
+		
+		//float intersectY = ((ay - by)/(ax - bx))*(intersectX-ax)+ay;
+		
+		return intersectX;
+	}
+	
 	
 	// Given a y value, this function will find the start and stop fill points .
 	private static int[] findLinesIntersected(int yLine, int minX, int maxX, int minY, int maxY, Triangle tri) {
@@ -93,6 +117,9 @@ public class RenderToScreenMethods {
 					xStart = x;
 				} else {
 					xEnd = x;
+					startStop[0] = xStart;
+					startStop[1] = xEnd;
+					return startStop;
 				}
 			}
 			
@@ -102,6 +129,9 @@ public class RenderToScreenMethods {
 					xStart = x;
 				} else {
 					xEnd = x;
+					startStop[0] = xStart;
+					startStop[1] = xEnd;
+					return startStop;
 				}
 			}
 			
@@ -111,6 +141,9 @@ public class RenderToScreenMethods {
 					xStart = x;
 				} else {
 					xEnd = x;
+					startStop[0] = xStart;
+					startStop[1] = xEnd;
+					return startStop;
 				}
 			}
 		}
