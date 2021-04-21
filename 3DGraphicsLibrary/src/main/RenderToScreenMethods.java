@@ -30,102 +30,94 @@ public class RenderToScreenMethods {
 			
 			// Finds the bounds of the smallest box that the triangle can reside in.
 			int minX = (int) Math.min(Math.min(p1.x, p2.x), p3.x);
-			int minY = (int) Math.min(Math.min(p1.y, p2.y), p3.y);
 			int maxX = (int) Math.max(Math.max(p1.x, p2.x), p3.x);
+			int minY = (int) Math.min(Math.min(p1.y, p2.y), p3.y);
 			int maxY = (int) Math.max(Math.max(p1.y, p2.y), p3.y);
 			
 			
 			// Credit for this algorithm goes to Dr. Rogach
 			// I couldn't figure out how to do filling manually until reading a paper by him.
 			// I just used his algorithm while developing but will replace it with mine below when it is finished.
-			double Area =
-				       (p1.y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - p1.x);
 
 			for(int y=minY; y<=maxY; y++) {
+				int[] startStop = findLinesIntersected(y, minX, maxX, minY, maxY, new Triangle(p1, p2, p3, tri.color));
+				System.out.println("start: " + startStop[0] + " stop: " + startStop[1]);
+				int xStart = startStop[0];
+				int xEnd = startStop[1];
 				for(int x=minX; x<=maxX; x++) {
-					double b1 = 
-		              ((y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - x)) / Area;
-		            double b2 =
-		              ((y - p1.y) * (p3.x - p1.x) + (p3.y - p1.y) * (p1.x - x)) / Area;
-		            double b3 =
-		              ((y - p2.y) * (p1.x - p2.x) + (p1.y - p2.y) * (p2.x - x)) / Area;
-		            if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
-		            	double depth = b1 * p1.z + b2 * p2.z + b3 * p3.z;
-		            	int zIndex = y * img.getWidth() + x;
-		    		    if (zBuffer[zIndex] < depth) {
-		    		        img.setRGB(x, y, tri.color.getRGB());
-		    		        zBuffer[zIndex] = depth;
-		    		    }
-		                //img.setRGB(x, y, tri.color.getRGB());
-		            }
-					
+					// For a line y=y* what x do we start at and end at
+					if(x>=xStart && x<=xEnd) {
+						img.setRGB(x, y, tri.color.getRGB());
+					}		            
 				}
 			}
 			
-			// EXPERIMENTAL
-			
-		    
-			
 		}
-		
 		return img;
 	}
 	
 	// Give the points on a line and a Y value and it will give you the corresponding X
-	private int pointSlope(int x1, int x2, int y1, int y2, int inputY) {
+	private static int pointSlope(int x1, int x2, int y1, int y2, int inputY) {
 		int returnX = 0;
+		if(y1-y2 == 0) {
+			return 0;
+		}
 		returnX = (inputY-y1)*((x1-x2)/(y1-y2))+x1;
 		return returnX;
 	}
 	
-	// Given a y value, this function will give two lines in points that represent what two lines the y=1 line intersects.
-	private Point[] findLinesIntersected(int yLine, int minX, int maxX, int minY, int maxY, Triangle tri) {
-		Point[] returnLines = new Point[4];
-		ArrayList<Point> allPoints = new ArrayList<>();
-		allPoints.add(tri.p1);
-		allPoints.add(tri.p2);
-		allPoints.add(tri.p3);
+	// Given a y value, this function will find the start and stop fill points .
+	private static int[] findLinesIntersected(int yLine, int minX, int maxX, int minY, int maxY, Triangle tri) {
+		int[] startStop = new int[2];
+		// The three lines are
+		// p1 to p2
+		// p2 to p3
+		// p3 to p1
 		
-		// We want the farthest left point and the lines that it has connected to it.
-		// The order will be the line that is highest first and then the lowest one.
+		int xStart = Integer.MAX_VALUE;
+		int xEnd = Integer.MIN_VALUE;
 		
-		// Find leftmost Point
-		Point leftMostPoint = new Point(0,0,0);
-		float lowestX = Float.POSITIVE_INFINITY;
-		for(Point point:allPoints) {
-			if(point.x<lowestX) {
-				lowestX = point.x;
-				leftMostPoint = point;
+		// For a line y=y* what x do we start at and end at
+		for(int x=minX; x<=maxX; x++) {
+			
+			// Using the point slop equation we are going to check when we intersect a given line.
+			// This is done by plugging in your points that form the line and your yLine and checking when the xOutput is equal to xPosition.
+			// This process is then done for each line and the intersections become the xStart and xEnd.
+			int xAtGivenY1 = pointSlope((int) tri.p1.x, (int) tri.p2.x, (int) tri.p1.y, (int) tri.p2.y, yLine);
+			int xAtGivenY2 = pointSlope((int) tri.p2.x, (int) tri.p3.x, (int) tri.p2.y, (int) tri.p3.y, yLine);
+			int xAtGivenY3 = pointSlope((int) tri.p3.x, (int) tri.p1.x, (int) tri.p3.y, (int) tri.p1.y, yLine);
+			
+			if(xAtGivenY1 == x) {
+				//System.out.println(xAtGivenY1);
+				if(xStart == Integer.MAX_VALUE) {
+					xStart = x;
+				} else {
+					xEnd = x;
+				}
+			}
+			
+			if(xAtGivenY2 == x) {
+				//System.out.println(xAtGivenY2);
+				if(xStart == Integer.MAX_VALUE) {
+					xStart = x;
+				} else {
+					xEnd = x;
+				}
+			}
+			
+			if(xAtGivenY3 == x) {
+				//System.out.println(xAtGivenY3);
+				if(xStart == Integer.MAX_VALUE) {
+					xStart = x;
+				} else {
+					xEnd = x;
+				}
 			}
 		}
-		allPoints.remove(leftMostPoint);
 		
-		// Take other two points and sort by Y. The highest will come next and the lowest will follow
-		Point unknownP1 = allPoints.remove(0);
-		Point unknownP2 = allPoints.remove(0);
-		Point highestRemainingPoint = (unknownP1.y >= unknownP2.y) ? unknownP1 : unknownP2;
-		Point lowestRemainingPoint = (unknownP1.y < unknownP2.y) ? unknownP1 : unknownP2;
-		
-		returnLines[0] = leftMostPoint;
-		returnLines[1] = highestRemainingPoint;
-		returnLines[2] = lowestRemainingPoint;
-		
-		if(yLine>=leftMostPoint.y) {
-			// Line one or the starting line of the fill
-			returnLines[0] = leftMostPoint;
-			returnLines[1] = highestRemainingPoint;
-			// Line two or the ending line of the fill
-			returnLines[2] = leftMostPoint;
-			returnLines[3] = lowestRemainingPoint;
-		} else {
-			// Line one or the starting line of the fill
-			returnLines[0] = leftMostPoint;
-			returnLines[1] = lowestRemainingPoint;
-			// Line two or the ending line of the fill
-			returnLines[2] = leftMostPoint;
-			returnLines[3] = highestRemainingPoint;
-		}
-		return returnLines;
+		startStop[0] = xStart;
+		startStop[1] = xEnd;
+		return startStop;
 	}
 	
 }
