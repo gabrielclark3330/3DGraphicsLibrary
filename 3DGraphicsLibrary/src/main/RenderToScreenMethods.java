@@ -2,6 +2,7 @@ package main;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class RenderToScreenMethods {
@@ -32,45 +33,69 @@ public class RenderToScreenMethods {
 			int minY = (int) Math.min(Math.min(p1.y, p2.y), p3.y);
 			int maxY = (int) Math.max(Math.max(p1.y, p2.y), p3.y);
 			
-			Point A = new Point(0,1,0);
-			Point B = new Point(0,4,0);
-			Point C = new Point(1,8,0);
-			Point D = new Point(1,4,0);
-			
-			
-			System.out.println(pointSlopeAlgebraic(A, B, C, D));
-			
 			// For every line
 			for(int y=minY; y<=maxY; y++) {
-				int[] startStop = findLinesIntersected(y, minX, maxX, minY, maxY, new Triangle(p1, p2, p3, tri.color));
-				//System.out.println("start: " + startStop[0] + " stop: " + startStop[1]);
-				int xStart = startStop[0];
-				int xEnd = startStop[1];
+				
+				ArrayList<Float> startStop = findIntersectionsForTri(new Triangle(p1, p2, p3, tri.color), y);
+				startStop.remove(Float.NaN);
+				float xStart = Collections.min(startStop);
+				float xEnd = Collections.max(startStop);
+				//System.out.println("S:" + xStart + " E:" + xEnd);
+				
+				//System.out.println("END");
+				
 				for(int x=minX; x<=maxX; x++) {
 					// For a line y=y* what x do we start at and end at
-					if(x>=xStart && x<=xEnd) {
+					if(x>=(int)xStart && x<=(int)xEnd) {
 						img.setRGB(x, y, tri.color.getRGB());
-					}		            
+					}     
 				}
 			}
-			
+
 		}
 		return img;
 	}
 	
-	// Give the points on a line and a Y value and it will give you the corresponding X
-	private static int pointSlope(int x1, int x2, int y1, int y2, int inputY) {
-		int returnX = 0;
-		if((y1-y2) == 0) {
-			return 0+x1;
-		}
-		returnX = (inputY-y1)*((x1-x2)/(y1-y2))+x1;
-		return returnX;
+	
+	private static ArrayList<Float> findIntersectionsForTri(Triangle tri, int yLine) {
+		ArrayList<Float> startStop = new ArrayList<Float>();
+		Point p1 = tri.p1;
+		Point p2 = tri.p2;
+		Point p3 = tri.p2;
+		
+		Point horizontalP1 = new Point(0, yLine, 0);
+		Point horizontalP2 = new Point(1, (float) (yLine), 0);
+		
+		/*
+		Point horizP1 = new Point(0, (float) .751, 0);
+		Point horizP2 = new Point(1, (float) .75, 0);
+		Point vertP1 = new Point(1, 0, 0);
+		Point vertP2 = new Point(1, 1, 0);
+		float xAtGivenY0 = pointSlopeAlgebraicIntersect(vertP1, vertP2, horizP1, horizP2);
+		System.out.println(xAtGivenY0);
+		*/
+		
+		float xAtGivenY1 = LineIntersectionX(p1, p2, horizontalP1, horizontalP2);
+		float xAtGivenY2 = LineIntersectionX(p2, p3, horizontalP1, horizontalP2);
+		float xAtGivenY3 = LineIntersectionX(p3, p1, horizontalP1, horizontalP2);
+		System.out.println(xAtGivenY1);
+		System.out.println(xAtGivenY2);
+		System.out.println(xAtGivenY3);
+		System.out.println("END1");
+		
+		
+		
+		startStop.add( xAtGivenY1);
+		startStop.add( xAtGivenY2);
+		startStop.add( xAtGivenY3);
+		
+		return startStop;
 	}
+	
 	
 	// Takes in the line made by points AB and line CD and returns the x coordinate of their intersection.
 	// This will return NaN if lines are parallel
-	private static float pointSlopeAlgebraic(Point a, Point b, Point c, Point d) {
+	private static float pointSlopeAlgebraicIntersect(Point a, Point b, Point c, Point d) {
 		float intersectX = (float) 0.0;
 		float ax = a.x;
 		float ay = a.y;
@@ -81,15 +106,55 @@ public class RenderToScreenMethods {
 		float dx = d.x;
 		float dy = d.y;
 		
-		intersectX = ((((cy - dy)/(cx - dx))*cx)-cy+ay-((ay - by)/(ax - bx))*ax)/(((cy - dy) /
-									(cx - dx)) - ((ay - by)/(ax - bx)));
+		intersectX = ((((cy - dy)/(cx - dx))*cx)-cy+ay-((ay - by)/(ax - bx))*ax)/
+							(((cy - dy)/(cx - dx)) - ((ay - by)/(ax - bx)));
 		
 		//float intersectY = ((ay - by)/(ax - bx))*(intersectX-ax)+ay;
 		
 		return intersectX;
 	}
 	
+	private static float LineIntersectionX(Point A, Point B, Point C, Point D)
+    {
+        // Line AB represented as a1x + b1y = c1
+		float a1 = B.y - A.y;
+        float b1 = A.x - B.x;
+        float c1 = a1*(A.x) + b1*(A.y);
+       
+        // Line CD represented as a2x + b2y = c2
+        float a2 = D.y - C.y;
+        float b2 = C.x - D.x;
+        float c2 = a2*(C.x)+ b2*(C.y);
+       
+        float determinant = a1*b2 - a2*b1;
+       
+        if (determinant == 0)
+        {
+            // The lines are parallel. This is simplified
+            // by returning a pair of FLT_MAX
+            return Float.MAX_VALUE;
+        }
+        else
+        {
+            float x = (b2*c1 - b1*c2)/determinant;
+            float y = (a1*c2 - a2*c1)/determinant;
+            return x;
+        }
+    }
 	
+	
+	// BELLOW FUNCTIONS ARE NOT IN USE. JUST FOR REFERENCE
+	
+	// Give the points on a line and a Y value and it will give you the corresponding X
+	private static int pointSlope(int x1, int x2, int y1, int y2, int inputY) {
+		int returnX = 0;
+		if((y1-y2) == 0) {
+			return 0+x1;
+		}
+		returnX = (inputY-y1)*((x1-x2)/(y1-y2))+x1;
+		return returnX;
+	}
+		
 	// Given a y value, this function will find the start and stop fill points .
 	private static int[] findLinesIntersected(int yLine, int minX, int maxX, int minY, int maxY, Triangle tri) {
 		int[] startStop = new int[2];
