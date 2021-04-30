@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +86,32 @@ public class RenderToScreenMethods {
 			}
 
 	 */
+	
+	private static void shadingBasedOnLight() {
+		Point norm = new Point(
+		         ab.y * ac.z - ab.z * ac.y,
+		         ab.z * ac.x - ab.x * ac.z,
+		         ab.x * ac.y - ab.y * ac.x
+		    );
+		    double normalLength =
+		        Math.sqrt(norm.x * norm.x + norm.y * norm.y + norm.z * norm.z);
+		    norm.x /= normalLength;
+		    norm.y /= normalLength;
+		    norm.z /= normalLength;
+	}
+	
+	// This is derived from a conversion from sRGB to linear RGB and isn't correct. 
+	// This is an aproximation I found online.
+	private static Color gradientShader(Color color, double shaderVal) {
+		double redLinear = Math.pow(color.getRed(), 2.4) * shaderVal;
+	    double greenLinear = Math.pow(color.getGreen(), 2.4) * shaderVal;
+	    double blueLinear = Math.pow(color.getBlue(), 2.4) * shaderVal;
+
+	    int red = (int) Math.pow(redLinear, 1/2.4);
+	    int green = (int) Math.pow(greenLinear, 1/2.4);
+	    int blue = (int) Math.pow(blueLinear, 1/2.4);
+		return new Color(red, green, blue);
+	}
 	
 	private static ArrayList<Float> findIntersectionsForTri(Triangle tri, int yLine) {
 		ArrayList<Float> startStop = new ArrayList<Float>();
