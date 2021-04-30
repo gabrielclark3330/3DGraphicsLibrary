@@ -7,7 +7,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
-// Displayer is what renders things to screen repetedly.
+// Displayer is what renders things to screen repetedly. This is also the
+// start of the program.
 public class Displayer extends JFrame {
 
     public Displayer() {
@@ -22,6 +23,7 @@ public class Displayer extends JFrame {
         add(surface);
 
         addWindowListener(new WindowAdapter() {
+            // Handles when we close the window.
             @Override
             public void windowClosing(WindowEvent e) {
                 Timer timer = surface.getTimer();

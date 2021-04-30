@@ -1,7 +1,8 @@
 package main;
 
 public class MatrixLibrary {
-	
+
+	// Enum representing different axies
 	public enum Axis {
 		X,
 		Y,
@@ -9,10 +10,14 @@ public class MatrixLibrary {
 	}
 	
 	// Takes in a Point, a rotation in degrees, and an 
-	// axis and returns the coordinates of the point with that rotation.
+	// axis and returns the coordinates of the point with that rotation about
+    // a given designated axis.
 	public static Point rotatePointsAboutOrigin(Point inputPoint, float rotationInDegrees, Axis axis) {
-		float[][] result3D = new float[3][1];
+		// Will contain the final result
+        float[][] result3D = new float[3][1];
 		
+        // the below three arrays conatain rotation matrixes to transform
+        // incomming points.
 		float[][] rotateX = new float[][] {
 			{1,0,0},
 			{0,(float) Math.cos(Math.toRadians(rotationInDegrees)),(float) - Math.sin(Math.toRadians(rotationInDegrees))},
@@ -35,6 +40,7 @@ public class MatrixLibrary {
 			{inputPoint.z}
 		};
 		
+        // Performs the needed matrix multiplications to transform a point.
 		if(axis.equals(Axis.X)) {
 			result3D = multiplyMatrices(rotateX, inputVector);
 		}else if(axis.equals(Axis.Y)) {
@@ -48,8 +54,8 @@ public class MatrixLibrary {
 	}
 	
 	// Takes in a Point, a rotation in degrees, and an 
-	// axis vector and returns the coordinates of the point with that rotation.
-	// Note: The vector (Ux, Uy, Uz) passed in aboutVector must be a unit vector
+	// axis vector and returns the coordinates of the point with that rotation about the given axis vector.
+	// NOTE: The vector (Ux, Uy, Uz) passed in aboutVector must be a unit vector
 	public static Point rotatePointsAboutAxis(Point inputPoint, float rotationInDegrees, float[] aboutVector) {
 		float[][] result3D = new float[3][1];
 		
@@ -103,10 +109,11 @@ public class MatrixLibrary {
 		return resultPoint;
 	}
 	
-	// Moves a point along a given axis.
+	// Moves a point along a given axis by a desegnated "movement" amount.
 	public static Point movePointAlongAxis(Point inputPoint, float movement, Axis axis) {
 		float[][] result3D = new float[3][1];
 		
+        // Based on incomming axis, a "movement" is added to a point.
 		if(axis.equals(Axis.X)) {
 			result3D = new float[][] {
 				{inputPoint.x+movement},
@@ -131,9 +138,12 @@ public class MatrixLibrary {
 		return resultPoint;
 	}
 	
+
 	// Takes in a point and projects it orthographically.
 	public static Point orthographicProjection(Point inputPoint) {
 		float[][] result3D = new float[3][1];
+
+        // Projection matrix that flattens Z values and retains X and Y
 		float[][] projectionMatrix = new float[][] {
 			{1,0,0},
 			{0,1,0}
@@ -155,6 +165,8 @@ public class MatrixLibrary {
 	public static Point perspectiveProjection(Point inputPoint, float fov, float nearClip, float farClip) {
 		float[][] result3D = new float[3][1];
 		
+        // Perspective matrix that scales a points x and y position on screen
+        // based on its z or distance.
 		float S = (float) (1/(Math.tan( (fov/2)*(Math.PI/180) )));
 		float clipping = (float) (-farClip/(farClip-nearClip));
 		float[][] perspectiveMatrix = new float[][] {
@@ -180,7 +192,8 @@ public class MatrixLibrary {
 	// them together with matrix multiplication rules.
 	public static float[][] multiplyMatrices(float[][] firstMatrix, float[][] secondMatrix) {
 		float[][] result = new float[firstMatrix.length][secondMatrix[0].length];
-
+        
+        // Multiplies rows by columns according to matMul rules.
 	    for (int row = 0; row < result.length; row++) {
 	        for (int col = 0; col < result[row].length; col++) {
 	            result[row][col] = multiplyMatricesCell(firstMatrix, secondMatrix, row, col);
@@ -190,6 +203,8 @@ public class MatrixLibrary {
 	    return result;
 	}
 	
+    // Helper function for multiplying individual parts of a given matrix.
+    // Assists multiplyMatrices()
 	public static float multiplyMatricesCell(float[][] firstMatrix, float[][] secondMatrix, int row, int col) {
 		float cell = 0;
 	    for (int i = 0; i < secondMatrix.length; i++) {
@@ -198,7 +213,9 @@ public class MatrixLibrary {
 	    return cell;
 	}
 	
-	// Overloaded methods for different dimension matrixes
+
+	// Overloaded methods for different dimension matrixes.
+    // Performs scalar multiplication to a given matrix
 	public static float[] scalarMultiplication(float[] inputMatrix, float scaleFactor) {
 		
 		float[] result = new float[inputMatrix.length];
@@ -211,6 +228,7 @@ public class MatrixLibrary {
 	}
 
 	// Overloaded methods for different dimension matrixes
+    // Performs scalar multiplication to a given matrix
 	public static float[][] scalarMultiplication(float[][] inputMatrix, float scaleFactor) {
 		
 		float[][] result = new float[inputMatrix.length][inputMatrix[0].length];
