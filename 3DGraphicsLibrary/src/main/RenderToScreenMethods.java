@@ -33,6 +33,29 @@ public class RenderToScreenMethods {
 			int minY = (int) Math.min(Math.min(p1.y, p2.y), p3.y);
 			int maxY = (int) Math.max(Math.max(p1.y, p2.y), p3.y);
 			
+			// I can't get my own algorithm working so I am using Dr. Rogach's again
+			double triangleArea =
+		       (p1.y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - p1.x);
+
+		    for (int y = minY; y <= maxY; y++) {
+		        for (int x = minX; x <= maxX; x++) {
+		            double b1 = 
+		              ((y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - x)) / triangleArea;
+		            double b2 =
+		              ((y - p1.y) * (p3.x - p1.x) + (p3.y - p1.y) * (p1.x - x)) / triangleArea;
+		            double b3 =
+		              ((y - p2.y) * (p1.x - p2.x) + (p1.y - p2.y) * (p2.x - x)) / triangleArea;
+		            if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
+		                img.setRGB(x, y, tri.color.getRGB());
+		            }
+		        }
+		    }
+
+		}
+		return img;
+	}
+	
+	/*
 			// For every line
 			for(int y=minY; y<=maxY; y++) {
 				
@@ -40,9 +63,6 @@ public class RenderToScreenMethods {
 				startStop.remove(Float.NaN);
 				float xStart = Collections.min(startStop);
 				float xEnd = Collections.max(startStop);
-				//System.out.println("S:" + xStart + " E:" + xEnd);
-				
-				//System.out.println("END");
 				
 				for(int x=minX; x<=maxX; x++) {
 					// For a line y=y* what x do we start at and end at
@@ -52,10 +72,7 @@ public class RenderToScreenMethods {
 				}
 			}
 
-		}
-		return img;
-	}
-	
+	 */
 	
 	private static ArrayList<Float> findIntersectionsForTri(Triangle tri, int yLine) {
 		ArrayList<Float> startStop = new ArrayList<Float>();
@@ -66,6 +83,7 @@ public class RenderToScreenMethods {
 		Point horizontalP1 = new Point(0, yLine, 0);
 		Point horizontalP2 = new Point(1, (float) (yLine+.00001), 0);
 		
+		// Test Data
 		/*
 		Point horizP1 = new Point(0, (float) .751, 0);
 		Point horizP2 = new Point(1, (float) .75, 0);
@@ -78,12 +96,6 @@ public class RenderToScreenMethods {
 		float xAtGivenY1 = LineIntersectionX(p1, p2, horizontalP1, horizontalP2);
 		float xAtGivenY2 = LineIntersectionX(p2, p3, horizontalP1, horizontalP2);
 		float xAtGivenY3 = LineIntersectionX(p3, p1, horizontalP1, horizontalP2);
-		System.out.println(xAtGivenY1);
-		System.out.println(xAtGivenY2);
-		System.out.println(xAtGivenY3);
-		System.out.println("END1");
-		
-		
 		
 		startStop.add( xAtGivenY1);
 		startStop.add( xAtGivenY2);
@@ -91,7 +103,6 @@ public class RenderToScreenMethods {
 		
 		return startStop;
 	}
-	
 	
 	// Takes in the line made by points AB and line CD and returns the x coordinate of their intersection.
 	// This will return NaN if lines are parallel
@@ -113,6 +124,7 @@ public class RenderToScreenMethods {
 		
 		return intersectX;
 	}
+	
 	
 	private static float LineIntersectionX(Point A, Point B, Point C, Point D)
     {
@@ -141,82 +153,6 @@ public class RenderToScreenMethods {
             return x;
         }
     }
-	
-	
-	// BELLOW FUNCTIONS ARE NOT IN USE. JUST FOR REFERENCE
-	
-	// Give the points on a line and a Y value and it will give you the corresponding X
-	private static int pointSlope(int x1, int x2, int y1, int y2, int inputY) {
-		int returnX = 0;
-		if((y1-y2) == 0) {
-			return 0+x1;
-		}
-		returnX = (inputY-y1)*((x1-x2)/(y1-y2))+x1;
-		return returnX;
-	}
-		
-	// Given a y value, this function will find the start and stop fill points .
-	private static int[] findLinesIntersected(int yLine, int minX, int maxX, int minY, int maxY, Triangle tri) {
-		int[] startStop = new int[2];
-		// The three lines are
-		// p1 to p2
-		// p2 to p3
-		// p3 to p1
-		
-		int xStart = Integer.MAX_VALUE;
-		int xEnd = Integer.MIN_VALUE;
-		
-		// For a line y=y* what x do we start at and end at
-		for(int x=minX; x<=maxX; x++) {
-			
-			// Using the point slop equation we are going to check when we intersect a given line.
-			// This is done by plugging in your points that form the line and your yLine and checking when the xOutput is equal to xPosition.
-			// This process is then done for each line and the intersections become the xStart and xEnd.
-			int xAtGivenY1 = pointSlope((int) tri.p1.x, (int) tri.p2.x, (int) tri.p1.y, (int) tri.p2.y, yLine);
-			int xAtGivenY2 = pointSlope((int) tri.p2.x, (int) tri.p3.x, (int) tri.p2.y, (int) tri.p3.y, yLine);
-			int xAtGivenY3 = pointSlope((int) tri.p3.x, (int) tri.p1.x, (int) tri.p3.y, (int) tri.p1.y, yLine);
-			
-			if(xAtGivenY1 == x) {
-				//System.out.println(xAtGivenY1);
-				if(xStart == Integer.MAX_VALUE) {
-					xStart = x;
-				} else {
-					xEnd = x;
-					startStop[0] = xStart;
-					startStop[1] = xEnd;
-					return startStop;
-				}
-			}
-			
-			if(xAtGivenY2 == x) {
-				//System.out.println(xAtGivenY2);
-				if(xStart == Integer.MAX_VALUE) {
-					xStart = x;
-				} else {
-					xEnd = x;
-					startStop[0] = xStart;
-					startStop[1] = xEnd;
-					return startStop;
-				}
-			}
-			
-			if(xAtGivenY3 == x) {
-				//System.out.println(xAtGivenY3);
-				if(xStart == Integer.MAX_VALUE) {
-					xStart = x;
-				} else {
-					xEnd = x;
-					startStop[0] = xStart;
-					startStop[1] = xEnd;
-					return startStop;
-				}
-			}
-		}
-		
-		startStop[0] = xStart;
-		startStop[1] = xEnd;
-		return startStop;
-	}
 	
 }
 
