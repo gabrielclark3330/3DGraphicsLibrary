@@ -22,3 +22,6 @@ Class that holds 3 points and a color assosiated with a triangle.
 
 ### [TriangleModels.java](3DGraphicsLibrary/src/main/TriangleModels.java)
 A storage library that holds different models made of triangles.
+
+### [RenderToScreenMethods.java](3DGraphicsLibrary/src/main/RenderToScreenMethods.java)
+This is the class that colors triangles on screen and applies lighting effects.
