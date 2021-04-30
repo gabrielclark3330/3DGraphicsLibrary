@@ -86,7 +86,10 @@ public class RenderToScreenMethods {
 			}
 
 	 */
-	
+    
+    // This function will eventualy calculate a triangles normal, take into
+    // account its angle relative to a light source and shade it accordingly.
+	/*
 	private static void shadingBasedOnLight() {
 		Point norm = new Point(
 		         ab.y * ac.z - ab.z * ac.y,
@@ -98,7 +101,7 @@ public class RenderToScreenMethods {
 		    norm.x /= normalLength;
 		    norm.y /= normalLength;
 		    norm.z /= normalLength;
-	}
+	} */
 	
 	// This is derived from a conversion from sRGB to linear RGB and isn't correct. 
 	// This is an aproximation I found online.
