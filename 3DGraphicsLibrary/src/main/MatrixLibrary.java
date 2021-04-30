@@ -184,7 +184,7 @@ public class MatrixLibrary {
 		
 		result3D = multiplyMatrices(perspectiveMatrix, inputVector);
 		
-		Point resultPoint = new Point(result3D[0][0], result3D[1][0], (float) 0);
+		Point resultPoint = new Point(result3D[0][0], result3D[1][0], result3D[2][0]);
 		return resultPoint;
 	}
 	

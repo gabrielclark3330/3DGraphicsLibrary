@@ -12,9 +12,16 @@ public class RenderToScreenMethods {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		
 		// Creates a starter deapth buffer with really far away values
+		float[] zBuffer = new float[width * height];
+		// this z-buffer is commonly used to keep track of each pixle's depth. 
+		// To properly use this we will initialize it with very distant depths.
+		for (int i=0; i<zBuffer.length; i++) {
+			zBuffer[i] = Float.NEGATIVE_INFINITY;
+		}
 		
 		
 		for(Triangle tri : triangles) {
+			
 			Point p1 = tri.p1;
 			Point p2 = tri.p2;
 			Point p3 = tri.p3;
@@ -34,19 +41,24 @@ public class RenderToScreenMethods {
 			int maxY = (int) Math.max(Math.max(p1.y, p2.y), p3.y);
 			
 			// I can't get my own algorithm working so I am using Dr. Rogach's again
-			double triangleArea =
+			float triangleArea =
 		       (p1.y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - p1.x);
 
 		    for (int y = minY; y <= maxY; y++) {
 		        for (int x = minX; x <= maxX; x++) {
-		            double b1 = 
+		        	float b1 = 
 		              ((y - p3.y) * (p2.x - p3.x) + (p2.y - p3.y) * (p3.x - x)) / triangleArea;
-		            double b2 =
+		        	float b2 =
 		              ((y - p1.y) * (p3.x - p1.x) + (p3.y - p1.y) * (p1.x - x)) / triangleArea;
-		            double b3 =
+		        	float b3 =
 		              ((y - p2.y) * (p1.x - p2.x) + (p1.y - p2.y) * (p2.x - x)) / triangleArea;
 		            if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
-		                img.setRGB(x, y, tri.color.getRGB());
+		            	float pixleDeapth = b1*p1.z + b2*p2.z + b3*p3.z;
+		            	int index = y* img.getWidth() + x;
+		            	if(zBuffer[index] < pixleDeapth) {
+		            		img.setRGB(x, y, tri.color.getRGB());
+		            		zBuffer[index] = pixleDeapth;
+		            	}
 		            }
 		        }
 		    }
@@ -119,9 +131,7 @@ public class RenderToScreenMethods {
 		
 		intersectX = ((((cy - dy)/(cx - dx))*cx)-cy+ay-((ay - by)/(ax - bx))*ax)/
 							(((cy - dy)/(cx - dx)) - ((ay - by)/(ax - bx)));
-		
-		//float intersectY = ((ay - by)/(ax - bx))*(intersectX-ax)+ay;
-		
+				
 		return intersectX;
 	}
 	
