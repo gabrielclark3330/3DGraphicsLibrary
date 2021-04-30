@@ -35,6 +35,8 @@ public class Displayer extends JFrame {
         
         
         
+        
+        
         // Window information Title=Points and size is 1000 by 1000.
         setTitle("Points");
         setSize(1000, 1000);
