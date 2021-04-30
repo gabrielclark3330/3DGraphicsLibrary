@@ -64,7 +64,7 @@ public class RenderToScreenMethods {
 		Point p3 = tri.p2;
 		
 		Point horizontalP1 = new Point(0, yLine, 0);
-		Point horizontalP2 = new Point(1, (float) (yLine), 0);
+		Point horizontalP2 = new Point(1, (float) (yLine+.00001), 0);
 		
 		/*
 		Point horizP1 = new Point(0, (float) .751, 0);
