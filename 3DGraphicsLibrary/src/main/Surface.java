@@ -23,7 +23,9 @@ import javax.swing.event.ChangeListener;
 
 import main.MatrixLibrary.Axis;
 
-
+// This class is used by the displayer method to render individual frames at a
+// given frame rate. This frame rate is set by the DELAY in the timer and your
+// computers limitations.
 class Surface extends JPanel implements ActionListener {
 	
 	// Code involving the timer here is boiler plate to render the screen
@@ -51,14 +53,25 @@ class Surface extends JPanel implements ActionListener {
         
         return timer;
     }
-    // doDrawing creates one frame based on what points 
+
+    // doDrawing() creates one frame based on what points 
     // are being passed to the g2d.drawline in the second for loop.
     private void doDrawing(Graphics g) {
     	
         Graphics2D g2d = (Graphics2D) g;
+        // NOTE: Graphics2D.translate can be used to shift origin to the
+        // center of the frame but this breaks when rasterization is used to
+        // fill triangles with color. Still makes for a useful function
+        // sometimes.
+
         //g2d.translate(getWidth() / 2, getHeight() / 2);
         
+        // g2d is used to draw all lines in this simulation and is best set to
+        // black or blue.
 		g2d.setColor(Color.BLACK);
+
+        // An ArrayList of triangles is passed through this function to render
+        // them with their respected position and color.
 		ArrayList<Triangle> pyramid = TriangleModels.getPyramid();
 		ArrayList<Triangle> passedTriangles = new ArrayList<Triangle>();
 		for (int i=0; i<pyramid.size(); i++) {
@@ -106,6 +119,10 @@ class Surface extends JPanel implements ActionListener {
 		    */
 		    
 		}
+
+        // This line calls the class that colors in the triangles displayed by
+        // the above code. 
+        // NOTE: This class currently centeres the given image.
 		BufferedImage img = RenderToScreenMethods.renderColoredTris(passedTriangles, getWidth(), getHeight());
 		g2d.drawImage(img, 0, 0, null);
     }
@@ -114,6 +131,7 @@ class Surface extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
     	
+        // Sets up the two sliders used to rotate the model in frame.
         super.paintComponent(g);
         doDrawing(g);
         // slider to control horizontal rotation
@@ -130,6 +148,8 @@ class Surface extends JPanel implements ActionListener {
     
     }
     
+    // Local class used to capture when the sliders values change every frame
+    // and their values when they do change.
     class SliderListener implements ChangeListener {
     	JSlider headingSlider;
     	JSlider pitchSlider;
@@ -148,6 +168,7 @@ class Surface extends JPanel implements ActionListener {
         }
     }
 
+    // Triggers a repaint of the screen when something happens on the screen.
     @Override
     public void actionPerformed(ActionEvent e) {
         repaint();

@@ -2,6 +2,7 @@ package main;
 
 import java.awt.Color;
 
+// Class that holds triangles for the rendering pipline. 
 public class Triangle {
 	// Note: these points are listed in counterClockwise order.
 	Point p1;

@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 public class TriangleModels {
+
 	// Creates a arraylist that holds the triangles for a pyramid.
 	public static ArrayList<Triangle> pyramid;
 	
+    // Sets up triangle models.
 	public TriangleModels() {
 		pyramid = getPyramid();
 	}
